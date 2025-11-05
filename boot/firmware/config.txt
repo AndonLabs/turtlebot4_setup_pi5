@@ -3,9 +3,8 @@ kernel=vmlinuz
 cmdline=cmdline.txt
 initramfs initrd.img followkernel
 
-[pi4]
+[pi5]
 max_framebuffers=2
-arm_boost=1
 
 [all]
 # Enable the audio output, I2C and SPI interfaces on the GPIO header. As these

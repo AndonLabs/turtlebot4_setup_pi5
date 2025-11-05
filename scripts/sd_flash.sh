@@ -5,7 +5,7 @@
 
 Help()
 {
-   echo "RPI4 SD card flash script. Supports flashing multiple cards simultaneously."
+   echo "RPI5 SD card flash script. Supports flashing multiple cards simultaneously."
    echo
    echo "usage: sudo bash sd_flash.sh /path/to/image.img [-h]"
    echo "options:"
