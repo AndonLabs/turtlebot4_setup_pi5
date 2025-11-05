@@ -1,4 +1,5 @@
 # Turtlebot4 Setup
+This is a fork for Raspberry Pi 5.
 
 Setup scripts and tools for the TurtleBot 4 Raspberry Pi.
 
@@ -76,3 +77,6 @@ wget -qO - https://raw.githubusercontent.com/turtlebot/turtlebot4_setup/jazzy/sc
 ```
 
 The script will automatically install ROS 2 Jazzy, TurtleBot 4 packages, and other important apt packages. It will also configure the RPi4 to work in a TurtleBot 4. Once complete, the RPi4 should be rebooted with `sudo reboot`. Then, run `turtlebot4-setup` to configure the robot with the setup tool.
+
+## Attribution
+This project is a fork of [TurtleBot 4 Setup](https://github.com/turtlebot/turtlebot4_setup) by Clearpath Robotics, Inc., licensed under Apache-2.0.
