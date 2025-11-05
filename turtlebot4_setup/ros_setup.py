@@ -438,12 +438,10 @@ class TurtleBot4Extras(robot_upstart.providers.Generic):
 
     def fix_conf_username(self, discovery_conf_contents):
         """
-        Replace the `User=ubuntu` text in the configuration with the current username.
+        Replace the User= field in the configuration with the current username.
 
         @return  The modified config file contents
         """
-        if os.getlogin() == 'ubuntu':
-            # no changes needed!
-            return discovery_conf_contents
-
-        return discovery_conf_contents.replace('User=ubuntu', f'User={os.getlogin()}')
+        import re
+        current_user = os.getlogin()
+        return re.sub(r'User=\w+', f'User={current_user}', discovery_conf_contents)

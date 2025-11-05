@@ -16,6 +16,11 @@
 #
 # @author Roni Kreinin (rkreinin@clearpathrobotics.com)
 
+set -euo pipefail
+
+CURRENT_USER="${SUDO_USER:-$(whoami)}"
+USER_HOME=$(eval echo "~${CURRENT_USER}")
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 Help()
 {
@@ -27,9 +32,15 @@ Help()
    echo
 }
 
-echo "Setting up Turtlebot4";
+echo "Setting up Turtlebot4 for user: ${CURRENT_USER}";
 
-sudo apt update && sudo apt upgrade
+if [ -f "${SCRIPT_DIR}/detect_hardware.sh" ]; then
+    echo ""
+    bash "${SCRIPT_DIR}/detect_hardware.sh" --info
+    echo ""
+fi
+
+sudo apt update && sudo apt upgrade -y
 
 wget -qO - https://raw.githubusercontent.com/turtlebot/turtlebot4_setup/jazzy/scripts/jazzy.sh | bash
 
@@ -48,11 +59,24 @@ if [ -f /etc/netplan/50-cloud-init.yaml ]; then
    sudo rm /etc/netplan/50-cloud-init.yaml
 fi
 
-git clone https://github.com/turtlebot/turtlebot4_setup.git -b jazzy && \
-sudo mv turtlebot4_setup/boot/firmware/* /boot/firmware && rm turtlebot4_setup/ -rf
+if [ ! -d /tmp/turtlebot4_setup_temp ]; then
+    git clone https://github.com/turtlebot/turtlebot4_setup.git -b jazzy /tmp/turtlebot4_setup_temp
+    sudo cp -r /tmp/turtlebot4_setup_temp/boot/firmware/* /boot/firmware/
+    rm -rf /tmp/turtlebot4_setup_temp
+fi
 
-echo "export ROBOT_SETUP=/etc/turtlebot4/setup.bash" | sudo tee -a ~/.bashrc
-echo "source \$ROBOT_SETUP" | sudo tee -a ~/.bashrc
-echo "source /etc/turtlebot4/aliases.bash" | sudo tee -a ~/.bashrc
+if ! grep -q "ROBOT_SETUP=/etc/turtlebot4/setup.bash" "${USER_HOME}/.bashrc"; then
+    echo "export ROBOT_SETUP=/etc/turtlebot4/setup.bash" | sudo tee -a "${USER_HOME}/.bashrc"
+    echo "source \$ROBOT_SETUP" | sudo tee -a "${USER_HOME}/.bashrc"
+    echo "source /etc/turtlebot4/aliases.bash" | sudo tee -a "${USER_HOME}/.bashrc"
+    sudo chown ${CURRENT_USER}:${CURRENT_USER} "${USER_HOME}/.bashrc"
+fi
 
+if [ -f "${SCRIPT_DIR}/detect_hardware.sh" ]; then
+    echo ""
+    echo "Checking for hardware-specific configuration..."
+    bash "${SCRIPT_DIR}/detect_hardware.sh" --update-boot || true
+fi
+
+echo ""
 echo "Installation complete. Reboot then run turtlebot4-setup to configure the robot."
