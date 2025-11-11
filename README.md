@@ -93,5 +93,10 @@ The script will:
 
 Once complete, reboot with `sudo reboot`. Then, run `turtlebot4-setup` to configure the robot with the setup tool.
 
+> [!NOTE]  
+> If using Cyclone you might need to edit /etc/turtlebot4/cyclonedds_rpi.xml
+> and comment in line 10 to allow the Pi to read from the Create3 through the
+> usb0 interface
+
 ## Attribution
 This project is a fork of [TurtleBot 4 Setup](https://github.com/turtlebot/turtlebot4_setup) by Clearpath Robotics, Inc., licensed under Apache-2.0.
